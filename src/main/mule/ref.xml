@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<sub-flow name="insertion-flow" doc:id="c2160842-5da5-489f-9165-78c6d30f9d94" >
+		<foreach doc:name="For Each" doc:id="f878f515-ba6f-4264-b838-eaf17ef9a5ab" collection="#[payload]">
+			<db:insert doc:name="Insert" doc:id="7c792e73-d5a5-4fb0-ab58-e535d7cb3aa2" config-ref="Database_Config">
+			<db:sql><![CDATA[INSERT INTO `phone_data`(`code`, `brand`, `model`, `price`, `battery`, `camBack`, `wideCam`, `camFront`, `os`, `osVersion`, `audioJack`, `connectivityTech`, `dispTech`, `weightinGram`, `screenSizeinInch`, `storage`, `ram`, `processor`, `processorVersion`, `processorSpeed`) VALUES (:code, :brand, :model, :price, :battery, :camBack, :wideCam, :camFront, :os, :osVersion, :audioJack, :connectivityTech, :dispTech, :weightinGram, :screenSizeinInch, :storage, :ram, :processor, :processorVersion, :processorSpeed);]]></db:sql>
+			<db:input-parameters><![CDATA[#[payload]]]></db:input-parameters>
+		</db:insert>
+		</foreach>
+		<ee:transform doc:name="Transform Message" doc:id="1c35120c-9b09-4ab7-9627-ac7ef527bfa5" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+  "status": "success"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	
+</sub-flow>
+	<sub-flow name="selection-flow" doc:id="89129b1c-7abd-4c63-a4ef-fe029ea30a3f" >
+		<ee:cache doc:name="Cache" doc:id="d5299df9-9a7e-440e-970e-4ac402ffbd66" >
+			<db:select doc:name="Select" doc:id="6095d4c2-b7c6-4a43-b3c7-b7cb9ebe57a0" config-ref="Database_Config">
+			<db:sql><![CDATA[SELECT * FROM `phone_data` WHERE 1]]></db:sql>
+		</db:select>
+		
+</ee:cache>
+		<ee:transform doc:name="Transform Message" doc:id="ff400cad-960d-41f4-803f-00021a02b7f3" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+	<sub-flow name="suggestion-flow" doc:id="71bea2ed-79b1-4a6f-8fd9-148b2242abdb" >
+		<flow-ref doc:name="selection-flow" doc:id="9a83e6fb-7fe0-4975-a940-937f36c428c3" name="selection-flow" target="phone_data"/>
+		<ee:transform doc:name="Transform Message" doc:id="18cd196d-0591-45d5-acb4-7243dcd9c42e" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="matched_phones" ><![CDATA[%dw 2.0
+output application/json
+
+var phone_data = vars.phone_data
+fun pref_filter (arr,name,val) = if(name == "minPrice") (arr[?($.price >= val)]) 
+else if(name == "maxPrice") (arr[?($.price <= val)]) 
+else (arr[?((val splitBy",") contains $[name])])
+
+var temp_payload = (payload.pref_arr[?(not isBlank($.value))]) map (i) ->{
+    (i.name)  : pref_filter(phone_data,i.name,i.value)
+}
+
+var code_list = (flatten(temp_payload.brand ++ temp_payload.processor ++ temp_payload.os ++ temp_payload.minPrice ++ temp_payload.maxPrice)).code 
+
+var code_match_count = (phone_data.code) map (i) -> ({
+    "code" : i,
+    "count" : sizeOf(code_list[?($ == i)])
+})
+
+var max_matched_phones = code_match_count[?($.count == max(code_match_count.count))]
+---
+phone_data[?(max_matched_phones.code contains $.code)]]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<foreach doc:name="For Each" doc:id="74f37e74-54f5-4397-a633-52a082c6603b" collection="#[payload.priority[-1 to 0]]">
+			<ee:transform doc:name="Transform Message" doc:id="c80dd10a-4876-4b7d-91df-9af12e5515c0">
+				<ee:message>
+				</ee:message>
+				<ee:variables>
+					<ee:set-variable variableName="matched_phones"><![CDATA[%dw 2.0
+output application/json
+
+var matched_phones = vars.matched_phones
+var priority = payload
+var dispVal = {
+    "LCD" : 1,
+    "HD" : 2,
+    "HD+" : 3,
+    "FHD" : 3,
+    "FHD+" : 4,
+    "LED" : 5,
+    "OLED" : 6,
+    "AMOLED" : 7,
+    "Super AMOLED" : 8
+}
+fun speedCalc(speed) = if (speed contains "Ghz") ((((speed splitBy  "Ghz")[0] as Number) default 0)*1000) 
+else if (speed contains "Mhz") (((speed splitBy "Mhz")[0])default 0) else 0
+fun dispCalc(disp) = (dispVal[disp] default 0)
+
+---
+if (priority == "price")
+(matched_phones orderBy ($.price))
+else if (priority == "battery")
+(matched_phones orderBy (-$.battery))
+else if (priority == "camBack")
+(matched_phones orderBy (-$.camBack))
+else if (priority == "wideCam")
+(matched_phones orderBy (-$.wideCam))
+else if (priority == "camFront")
+(matched_phones orderBy (-$.camFront))
+else if (priority == "osVersion")
+(matched_phones orderBy (-$.osVersion))
+else if (priority == "audioJack")
+(matched_phones orderBy (-$.audioJack))
+else if (priority == "connectivityTech")
+(matched_phones orderBy (-$.connectivityTech))
+else if (priority == "weightinGram")
+(matched_phones orderBy ($.weightinGram))
+else if (priority == "screenSizeinInch")
+(matched_phones orderBy (-$.screenSizeinInch))
+else if (priority == "smallerScreenSizeinInch")
+(matched_phones orderBy ($.screenSizeinInch))
+else if (priority == "storage")
+(matched_phones orderBy (-$.storage))
+else if (priority == "ram")
+(matched_phones orderBy (-$.ram))
+else if (priority == "processorSpeed")
+(matched_phones orderBy (-(speedCalc($.processorSpeed) as Number)))
+else if (priority == "dispTech")
+(matched_phones orderBy (-(dispCalc($.dispTech) as Number)))
+else matched_phones]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+		</foreach>
+		<ee:transform doc:name="Transform Message" doc:id="31fdee1b-5a7f-43ba-85de-a5057729576d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+vars.matched_phones]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+</mule>
