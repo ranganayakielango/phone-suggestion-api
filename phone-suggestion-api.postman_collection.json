@@ -1,0 +1,134 @@
+{
+	"info": {
+		"_postman_id": "fd8949cb-69fb-41d0-bc51-ce6aa82c899f",
+		"name": "phone-suggestion-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "suggestion - local",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"pref_arr\": [\r\n        {\r\n            \"name\": \"brand\",\r\n            \"value\": \"Samsung,Redmi\"\r\n        },\r\n        {\r\n            \"name\": \"processor\",\r\n            \"value\": \"Exynos,Mediatek Helio\"\r\n        },\r\n        {\r\n            \"name\": \"os\",\r\n            \"value\": \"Android\"\r\n        },\r\n        {\r\n            \"name\": \"minPrice\",\r\n            \"value\": 8000\r\n        },\r\n        {\r\n            \"name\": \"maxPrice\",\r\n            \"value\": 10000\r\n        }\r\n    ],\r\n    \"priority\": [\r\n        \"battery\",\r\n        \"price\"\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/suggestion",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"suggestion"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "suggestion - cloudHub",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"pref_arr\": [\r\n        {\r\n            \"name\": \"brand\",\r\n            \"value\": \"Samsung,Redmi\"\r\n        },\r\n        {\r\n            \"name\": \"processor\",\r\n            \"value\": \"Exynos,Mediatek Helio\"\r\n        },\r\n        {\r\n            \"name\": \"os\",\r\n            \"value\": \"Android\"\r\n        },\r\n        {\r\n            \"name\": \"minPrice\",\r\n            \"value\": 8000\r\n        },\r\n        {\r\n            \"name\": \"maxPrice\",\r\n            \"value\": 10000\r\n        }\r\n    ],\r\n    \"priority\": [\r\n        \"battery\",\r\n        \"price\"\r\n        \r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://phone-suggestion-api.us-e2.cloudhub.io/api/suggestion",
+					"protocol": "http",
+					"host": [
+						"phone-suggestion-api",
+						"us-e2",
+						"cloudhub",
+						"io"
+					],
+					"path": [
+						"api",
+						"suggestion"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "phone",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n    {\r\n        \"connectivityTech\": \"4\",\r\n        \"code\": 1,\r\n        \"os\": \"Android\",\r\n        \"processorSpeed\": \"2Ghz\",\r\n        \"camBack\": 48,\r\n        \"storage\": 64,\r\n        \"battery\": 6000,\r\n        \"screenSizeinInch\": 6.5,\r\n        \"processor\": \"Exynos\",\r\n        \"audioJack\": \"3.5\",\r\n        \"processorVersion\": \"850\",\r\n        \"price\": 9499.0,\r\n        \"camFront\": 8,\r\n        \"dispTech\": \"LCD\",\r\n        \"model\": \"Galaxy M12\",\r\n        \"weightinGram\": 221.0,\r\n        \"osVersion\": \"11\",\r\n        \"brand\": \"Samsung\",\r\n        \"wideCam\": 5,\r\n        \"ram\": 4\r\n    },\r\n    {\r\n        \"connectivityTech\": \"4\",\r\n        \"code\": 2,\r\n        \"os\": \"Android\",\r\n        \"processorSpeed\": \"2.3Ghz\",\r\n        \"camBack\": 13,\r\n        \"storage\": 64,\r\n        \"battery\": 5000,\r\n        \"screenSizeinInch\": 6.53000020980835,\r\n        \"processor\": \"Mediatek Helio\",\r\n        \"audioJack\": \"3.5\",\r\n        \"processorVersion\": \"G35\",\r\n        \"price\": 8499.0,\r\n        \"camFront\": 5,\r\n        \"dispTech\": \"AMOLED\",\r\n        \"model\": \"9\",\r\n        \"weightinGram\": 194.0,\r\n        \"osVersion\": \"10\",\r\n        \"brand\": \"Redmi\",\r\n        \"wideCam\": 2,\r\n        \"ram\": 4\r\n    },\r\n    {\r\n        \"connectivityTech\": \"4\",\r\n        \"code\": 3,\r\n        \"os\": \"Android\",\r\n        \"processorSpeed\": \"1.6MHz\",\r\n        \"camBack\": 8,\r\n        \"storage\": 32,\r\n        \"battery\": 4880,\r\n        \"screenSizeinInch\": 6.5,\r\n        \"processor\": \"Octa core\",\r\n        \"audioJack\": \"3.5\",\r\n        \"processorVersion\": \"\",\r\n        \"price\": 7499.0,\r\n        \"camFront\": 5,\r\n        \"dispTech\": \"HD+\",\r\n        \"model\": \"narzo 50i\",\r\n        \"weightinGram\": 195.0,\r\n        \"osVersion\": \"11\",\r\n        \"brand\": \"realme\",\r\n        \"wideCam\": 0,\r\n        \"ram\": 2\r\n    },\r\n    {\r\n        \"connectivityTech\": \"4\",\r\n        \"code\": 4,\r\n        \"os\": \"Android\",\r\n        \"processorSpeed\": \"1.8MHz\",\r\n        \"camBack\": 13,\r\n        \"storage\": 64,\r\n        \"battery\": 4000,\r\n        \"screenSizeinInch\": 6.389999866485596,\r\n        \"processor\": \"Qualcomm Snapdragon\",\r\n        \"audioJack\": \"3.5\",\r\n        \"processorVersion\": \"460\",\r\n        \"price\": 10780.0,\r\n        \"camFront\": 8,\r\n        \"dispTech\": \"HD+\",\r\n        \"model\": \"3.4\",\r\n        \"weightinGram\": 180.0,\r\n        \"osVersion\": \"10\",\r\n        \"brand\": \"Nokia\",\r\n        \"wideCam\": 5,\r\n        \"ram\": 4\r\n    }\r\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://phone-suggestion-api.us-e2.cloudhub.io/api/phone",
+					"protocol": "http",
+					"host": [
+						"phone-suggestion-api",
+						"us-e2",
+						"cloudhub",
+						"io"
+					],
+					"path": [
+						"api",
+						"phone"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "phone",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"pref_arr\": [\r\n        {\r\n            \"name\": \"brand\",\r\n            \"value\": \"Samsung,Redmi\"\r\n        },\r\n        {\r\n            \"name\": \"processor\",\r\n            \"value\": \"Exynos,Mediatek Helio\"\r\n        },\r\n        {\r\n            \"name\": \"os\",\r\n            \"value\": \"Android\"\r\n        },\r\n        {\r\n            \"name\": \"minPrice\",\r\n            \"value\": 8000\r\n        },\r\n        {\r\n            \"name\": \"maxPrice\",\r\n            \"value\": 10000\r\n        }\r\n    ],\r\n    \"priority\": [\r\n        \"battery\",\r\n        \"price\"\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://phone-suggestion-api.us-e2.cloudhub.io/api/phone",
+					"protocol": "http",
+					"host": [
+						"phone-suggestion-api",
+						"us-e2",
+						"cloudhub",
+						"io"
+					],
+					"path": [
+						"api",
+						"phone"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
